@@ -12,30 +12,33 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1e293b; overflow-x: hidden; margin: 0; padding: 0; }
-
-        /* Background Animation */
+        
+        /* Animasi Background */
         .animated-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #f0f9ff 100%); overflow: hidden; }
         .bg-shape { position: absolute; border-radius: 50%; opacity: 0.4; background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0) 70%); animation: float 20s infinite linear; }
         @keyframes float { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0, 0) scale(1); } }
-
+        
         /* UI Components */
         .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
-        .input-formal { width: 100%; padding: 0.75rem 1rem; margin-top: 0.25rem; background-color: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; transition: all 0.3s ease; }
+        .input-formal { width: 100%; padding: 0.65rem 1rem; margin-top: 0.25rem; background-color: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.85rem; transition: all 0.3s ease; }
         .input-formal:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
-        
+        label { font-size: 0.8rem; font-weight: 600; color: #475569; }
+
         /* Wizard & Animations */
         .step-indicator { display: flex; justify-content: space-between; position: relative; margin-bottom: 2rem; }
         .step-indicator::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #cbd5e1; z-index: 0; transform: translateY(-50%); }
         .step-item { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-        .step-circle { width: 35px; height: 35px; border-radius: 50%; background: #ffffff; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b; transition: all 0.3s; }
+        .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #ffffff; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b; font-size: 0.8rem; transition: all 0.3s; }
         .step-item.active .step-circle { border-color: #0ea5e9; background: #0ea5e9; color: #ffffff; }
         .step-item.completed .step-circle { border-color: #10b981; background: #10b981; color: #ffffff; }
-        .step-label { font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
+        .step-label { font-size: 0.65rem; font-weight: 600; color: #64748b; text-transform: uppercase; text-align: center; }
+        .step-item.active .step-label { color: #0ea5e9; }
         
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        
         .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
         .table-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
@@ -50,16 +53,14 @@
     <div id="login-container" class="min-h-screen flex items-center justify-center p-4 relative z-10">
         <div class="glass-panel p-10 rounded-2xl w-full max-w-md fade-in">
             <div class="text-center mb-8">
-                <div class="inline-block p-4 rounded-full bg-sky-50 mb-4 border border-sky-100">
-                    <i class="fas fa-shield-halved text-4xl text-sky-600"></i>
-                </div>
+                <div class="inline-block p-4 rounded-full bg-sky-50 mb-4 border border-sky-100"><i class="fas fa-shield-halved text-4xl text-sky-600"></i></div>
                 <h2 class="text-2xl font-bold text-slate-800">SISTEM TERPADU</h2>
                 <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Portal Akses Medis</p>
             </div>
             <div class="space-y-5">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Email Petugas</label><input type="email" id="loginEmail" class="input-formal" placeholder="admin@hemofiliasolo.com"></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Kata Sandi</label><input type="password" id="loginPass" class="input-formal" placeholder="••••••••"></div>
-                <button onclick="handleLogin()" class="w-full bg-sky-600 text-white font-bold py-3 rounded-lg mt-4 hover:bg-sky-700 shadow-lg">MASUK <i class="fas fa-arrow-right ml-2"></i></button>
+                <div><label>Email Petugas</label><input type="email" id="loginEmail" class="input-formal" placeholder="admin@hemofiliasolo.com"></div>
+                <div><label>Kata Sandi</label><input type="password" id="loginPass" class="input-formal" placeholder="••••••••"></div>
+                <button onclick="handleLogin()" class="w-full bg-sky-600 text-white font-bold py-3 rounded-lg mt-4 hover:bg-sky-700 transition shadow-lg">MASUK KE SISTEM <i class="fas fa-arrow-right ml-2"></i></button>
             </div>
         </div>
     </div>
@@ -73,83 +74,200 @@
                     <p class="text-xs font-medium text-slate-500">Administrator: <span class="text-sky-600">Ahmad Fahril</span></p>
                 </div>
             </div>
-            <button onclick="handleLogout()" class="px-4 py-2 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 text-sm font-bold"><i class="fas fa-power-off mr-1"></i> KELUAR</button>
+            <button onclick="handleLogout()" class="px-4 py-2 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 text-sm font-bold transition"><i class="fas fa-power-off mr-1"></i> KELUAR</button>
         </header>
 
         <nav class="flex justify-center gap-4 mt-6">
-            <button onclick="switchMainTab('input')" id="nav-input" class="px-6 py-2 bg-sky-600 text-white font-bold rounded-full shadow-md transition">FORM INPUT PASIEN</button>
+            <button onclick="switchMainTab('input')" id="nav-input" class="px-6 py-2 bg-sky-600 text-white font-bold rounded-full shadow-md transition">FORM & PREVIEW</button>
             <button onclick="switchMainTab('manage')" id="nav-manage" class="px-6 py-2 bg-white text-slate-600 font-bold rounded-full border shadow-sm hover:bg-slate-50 transition">IMPORT / EXPORT EXCEL</button>
         </nav>
 
-        <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-8">
+        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full space-y-8">
             
             <div id="section-input" class="block">
-                <div class="glass-panel p-8 rounded-2xl fade-in mb-8">
-                    <h2 class="text-xl font-bold text-slate-800 border-b pb-4 mb-6"><i class="fas fa-file-medical mr-2 text-sky-500"></i> Form Input Data Pasien Baru</h2>
+                
+                <div class="glass-panel p-6 md:p-8 rounded-2xl fade-in mb-8" id="form-section">
+                    <div class="flex justify-between items-center border-b pb-4 mb-6">
+                        <h2 class="text-xl font-bold text-slate-800" id="formTitle"><i class="fas fa-file-medical mr-2 text-sky-500"></i> Form Input Komplit (Sesuai Format Data)</h2>
+                        <button onclick="resetForm()" id="btnCancelEdit" class="hidden text-sm bg-red-100 text-red-600 px-4 py-1 rounded-full font-bold hover:bg-red-200 transition">Batal Edit</button>
+                    </div>
+                    
                     <div class="step-indicator" id="stepper"></div>
+
                     <form id="wizardForm" onsubmit="event.preventDefault();">
                         
                         <div id="step1" class="tab-content active">
                             <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Induk Pasien</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label>Nama Lengkap</label><input type="text" id="p_nama" class="input-formal" required></div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="md:col-span-2"><label>Nama Lengkap</label><input type="text" id="p_nama" class="input-formal" required></div>
                                 <div><label>NIK</label><input type="number" id="p_nik" class="input-formal"></div>
-                                <div><label>Jenis Kelamin</label><select id="p_jk" class="input-formal"><option>Laki-laki</option><option>Perempuan</option></select></div>
+                                <div><label>Jenis Kelamin</label>
+                                    <select id="p_jk" class="input-formal"><option>Laki-laki</option><option>Perempuan</option></select>
+                                </div>
+                                
                                 <div><label>Tempat Lahir</label><input type="text" id="p_tempatlahir" class="input-formal"></div>
                                 <div><label>Tanggal Lahir</label><input type="date" id="p_tgllahir" class="input-formal"></div>
-                                <div class="flex gap-2">
-                                    <div class="w-1/2"><label>Gol. Darah</label><select id="p_goldarah" class="input-formal"><option>A</option><option>B</option><option>AB</option><option>O</option></select></div>
-                                    <div class="w-1/2"><label>Rhesus</label><select id="p_rhesus" class="input-formal"><option>+</option><option>-</option></select></div>
+                                <div><label>Gol. Darah</label>
+                                    <select id="p_goldarah" class="input-formal"><option>A</option><option>B</option><option>AB</option><option>O</option><option>Tidak Tahu</option></select>
                                 </div>
-                                <div class="md:col-span-3"><label>Alamat Lengkap</label><input type="text" id="p_alamat" class="input-formal"></div>
+                                <div><label>Rhesus</label>
+                                    <select id="p_rhesus" class="input-formal"><option>+</option><option>-</option><option>Tidak Tahu</option></select>
+                                </div>
+
+                                <div><label>Pekerjaan</label><input type="text" id="p_pekerjaan" class="input-formal" placeholder="PNS/TNI/Polri/Tidak Bekerja..."></div>
+                                <div><label>Pendidikan Terakhir</label><input type="text" id="p_pendidikan" class="input-formal" placeholder="SD/SMP/SMA/S1..."></div>
+                                <div><label>No. Ponsel</label><input type="text" id="p_noponsel" class="input-formal"></div>
+                                <div><label>HMHI Cabang</label><input type="text" id="p_hmhi" class="input-formal" placeholder="Contoh: DI Yogyakarta"></div>
+
+                                <div class="md:col-span-2"><label>Alamat (Jalan/RT/RW)</label><input type="text" id="p_alamat" class="input-formal"></div>
+                                <div><label>Kelurahan/Desa</label><input type="text" id="p_kelurahan" class="input-formal"></div>
+                                <div><label>Kecamatan</label><input type="text" id="p_kecamatan" class="input-formal"></div>
+
+                                <div><label>Kabupaten/Kota</label><input type="text" id="p_kabkota" class="input-formal"></div>
+                                <div><label>Propinsi</label><input type="text" id="p_propinsi" class="input-formal"></div>
+                                <div class="md:col-span-2"><label>Kota Cakupan Cabang</label><input type="text" id="p_cakupan" class="input-formal" placeholder="Solo, Karanganyar, Klaten, ..."></div>
+                                
+                                <div class="md:col-span-2"><label>Catatan</label><input type="text" id="p_catatan" class="input-formal"></div>
+                                <div class="md:col-span-2"><label>Keterangan Meninggal</label><input type="text" id="p_ketmeninggal" class="input-formal" placeholder="Isi jika ada keterangan spesifik"></div>
                             </div>
                         </div>
-                        
-                        <div id="step2" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Diagnosa</h3><div class="grid grid-cols-2 gap-4"><div><label>Jenis Hemofilia</label><select id="d_jenis" class="input-formal"><option>A</option><option>B</option><option>VWD</option></select></div><div><label>Kategori</label><select id="d_kategori" class="input-formal"><option>Ringan</option><option>Sedang</option><option>Berat</option></select></div></div></div>
-                        <div id="step3" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Inhibitor</h3><div class="grid grid-cols-2 gap-4"><div><label>Faktor</label><input type="text" id="i_faktor" class="input-formal"></div><div><label>Titer (BU)</label><input type="number" id="i_titer" class="input-formal"></div></div></div>
-                        <div id="step4" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Virus Tes</h3><div class="grid grid-cols-2 gap-4"><div><label>Jenis Tes</label><input type="text" id="v_jenis" class="input-formal"></div><div><label>Hasil</label><input type="text" id="v_hasil" class="input-formal"></div></div></div>
-                        <div id="step5" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">RS Penangan</h3><div class="grid grid-cols-2 gap-4"><div><label>Nama RS</label><input type="text" id="r_nama" class="input-formal"></div><div><label>DPJP</label><input type="text" id="r_dpjp" class="input-formal"></div></div></div>
-                        <div id="step6" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Kematian</h3><div class="grid grid-cols-2 gap-4"><div><label>Penyebab Kematian</label><input type="text" id="k_penyebab" class="input-formal"></div><div><label>Tahun Kematian</label><input type="number" id="k_tahun" class="input-formal"></div></div></div>
-                        <div id="step7" class="tab-content"><h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Kontak Darurat</h3><div class="grid grid-cols-2 gap-4"><div><label>Nama Kontak</label><input type="text" id="c_nama" class="input-formal"></div><div><label>No Telp</label><input type="text" id="c_notelp" class="input-formal"></div></div></div>
+
+                        <div id="step2" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Diagnosa</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label>Jenis Hemofilia</label>
+                                    <select id="d_jenis" class="input-formal"><option>A</option><option>B</option><option>VWD</option></select>
+                                </div>
+                                <div><label>Kategori</label>
+                                    <select id="d_kategori" class="input-formal"><option>Ringan</option><option>Sedang</option><option>Berat</option></select>
+                                </div>
+                                <div><label>Tgl Diagnosis</label><input type="date" id="d_tanggal" class="input-formal"></div>
+                                <div><label>Sumber Diagnosis</label><input type="text" id="d_sumber" class="input-formal" placeholder="Contoh: Hasil lab"></div>
+                            </div>
+                        </div>
+
+                        <div id="step3" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Inhibitor</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label>Faktor</label><input type="text" id="i_faktor" class="input-formal" placeholder="Contoh: FVIII"></div>
+                                <div><label>Titer (BU)</label><input type="number" step="0.1" id="i_titer" class="input-formal" placeholder="0"></div>
+                                <div><label>Tgl Ukur</label><input type="date" id="i_tanggal" class="input-formal"></div>
+                                <div><label>Lab Penguji</label><input type="text" id="i_lab" class="input-formal" placeholder="Contoh: Prodia"></div>
+                            </div>
+                        </div>
+
+                        <div id="step4" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Tes Virus</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label>Jenis Tes</label>
+                                    <select id="v_jenis" class="input-formal"><option>HBsAg</option><option>Anti-HCV</option><option>HIV</option></select>
+                                </div>
+                                <div><label>Hasil</label>
+                                    <select id="v_hasil" class="input-formal"><option>Positif</option><option>Negatif</option><option>Unknown</option></select>
+                                </div>
+                                <div><label>Tgl Tes</label><input type="date" id="v_tanggal" class="input-formal"></div>
+                                <div><label>Lab Tes</label><input type="text" id="v_lab" class="input-formal" placeholder="belum pernah tes / Nama Lab"></div>
+                            </div>
+                        </div>
+
+                        <div id="step5" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data RS Penangan</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2"><label>Nama RS</label><input type="text" id="r_namars" class="input-formal"></div>
+                                <div><label>DPJP (Dokter)</label><input type="text" id="r_dpjp" class="input-formal"></div>
+                                
+                                <div><label>Kota RS</label><input type="text" id="r_kotars" class="input-formal"></div>
+                                <div><label>Provinsi RS</label><input type="text" id="r_provrs" class="input-formal"></div>
+                                <div><label>Tanggal Kunjungan</label><input type="date" id="r_tglkunjungan" class="input-formal"></div>
+
+                                <div><label>Jenis Penanganan</label>
+                                    <select id="r_jenispenanganan" class="input-formal"><option>On Demand</option><option>Profilaksis</option></select>
+                                </div>
+                                <div><label>Layanan Rawat</label>
+                                    <select id="r_layanan" class="input-formal"><option>Rawat Jalan</option><option>Rawat Inap</option></select>
+                                </div>
+                                <div><label>Frekuensi</label><input type="text" id="r_frekuensi" class="input-formal" placeholder="Contoh: 1 x sebulan"></div>
+                                
+                                <div><label>Dosis</label><input type="text" id="r_dosis" class="input-formal" placeholder="Contoh: 2000 IU"></div>
+                                <div><label>Produk</label><input type="text" id="r_produk" class="input-formal" placeholder="Konsentrat (plasma derived)"></div>
+                                <div><label>Merk</label><input type="text" id="r_merk" class="input-formal" placeholder="hemoctin, Octanate..."></div>
+                            </div>
+                        </div>
+
+                        <div id="step6" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Kematian</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label>Penyebab Kematian (Cause of Death)</label><input type="text" id="k_cause" class="input-formal" placeholder="Kosongi jika masih hidup"></div>
+                                <div><label>Tahun Kematian (Year of Death)</label><input type="number" id="k_year" class="input-formal" placeholder="YYYY"></div>
+                            </div>
+                        </div>
+
+                        <div id="step7" class="tab-content">
+                            <h3 class="text-sm font-bold text-sky-600 uppercase mb-4 border-l-4 border-sky-500 pl-2">Data Kontak</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label>Relasi</label>
+                                    <select id="c_relasi" class="input-formal"><option>Ayah</option><option>Ibu</option><option>Wali</option><option>Suami/Istri</option></select>
+                                </div>
+                                <div><label>Nama Kontak</label><input type="text" id="c_namakontak" class="input-formal"></div>
+                                <div><label>No. Telp</label><input type="text" id="c_notelp" class="input-formal"></div>
+                                <div><label>Status Kontak (Primary)</label>
+                                    <select id="c_primary" class="input-formal"><option value="True">True</option><option value="False">False</option></select>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="mt-8 flex justify-between border-t pt-4">
-                            <button type="button" id="btnPrev" onclick="changeStep(-1)" class="hidden px-6 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-300">Kembali</button>
+                            <button type="button" id="btnPrev" onclick="changeStep(-1)" class="hidden px-6 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-300 transition">Kembali</button>
                             <div class="ml-auto">
-                                <button type="button" id="btnNext" onclick="changeStep(1)" class="px-6 py-2 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700 shadow-md">Selanjutnya</button>
-                                <button type="button" id="btnSubmit" onclick="submitData()" class="hidden px-8 py-2 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 shadow-md"><i class="fas fa-save mr-2"></i>Simpan Pasien</button>
+                                <button type="button" id="btnNext" onclick="changeStep(1)" class="px-6 py-2 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700 transition shadow-md shadow-sky-200">Selanjutnya</button>
+                                <button type="button" id="btnSubmit" onclick="submitData()" class="hidden px-8 py-2 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition shadow-md shadow-emerald-200"><i class="fas fa-save mr-2"></i><span id="submitBtnText">Simpan Pasien Baru</span></button>
                             </div>
                         </div>
                     </form>
                 </div>
 
-                <div class="glass-panel p-8 rounded-2xl fade-in">
-                    <h2 class="text-xl font-bold text-slate-800 border-b pb-4 mb-6"><i class="fas fa-table mr-2 text-sky-500"></i> Preview Data Database</h2>
+                <div class="glass-panel p-6 md:p-8 rounded-2xl fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 mb-6 gap-4">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fas fa-table mr-2 text-sky-500"></i> Preview Database</h2>
+                        <div class="relative w-full md:w-64">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-search text-slate-400"></i></div>
+                            <input type="text" id="searchInput" onkeyup="filterTable()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" placeholder="Cari nama pasien...">
+                        </div>
+                    </div>
+                    
                     <div class="table-container overflow-x-auto border rounded-lg bg-white">
                         <table class="w-full text-sm text-left">
                             <thead class="bg-slate-50 text-slate-600 uppercase font-bold border-b">
-                                <tr><th>Patient ID</th><th>Nama Lengkap</th><th>Hemofilia / Kat.</th><th>RS Penangan</th><th>Kontak Darurat</th><th class="text-center">Aksi</th></tr>
+                                <tr>
+                                    <th class="px-4 py-3">P. ID / NIK</th>
+                                    <th class="px-4 py-3">Nama Pasien</th>
+                                    <th class="px-4 py-3">Hemofilia</th>
+                                    <th class="px-4 py-3">RS Penangan</th>
+                                    <th class="px-4 py-3 text-center">Aksi</th>
+                                </tr>
                             </thead>
-                            <tbody id="previewTableBody" class="divide-y divide-slate-100"></tbody>
+                            <tbody id="previewTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">Loading...</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
             <div id="section-manage" class="hidden space-y-6">
-                
-                <div class="glass-panel p-8 rounded-2xl fade-in flex items-center justify-between border-l-4 border-sky-500">
+                <div class="glass-panel p-8 rounded-2xl fade-in flex flex-col md:flex-row items-center justify-between border-l-4 border-sky-500 gap-4">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">1. Unduh Template Excel (.xlsx)</h3>
-                        <p class="text-sm text-slate-500">Gunakan file kosong ini agar format kolom sesuai dengan database sistem.</p>
+                        <h3 class="text-lg font-bold text-slate-800">1. Unduh Template Excel Lengkap</h3>
+                        <p class="text-sm text-slate-500">Template ini berisikan ke-7 sheet dengan kolom yang sesuai sistem.</p>
                     </div>
-                    <button onclick="downloadTemplate()" class="bg-sky-100 text-sky-700 px-6 py-3 rounded-lg font-bold hover:bg-sky-200 transition"><i class="fas fa-download mr-2"></i>Download Template</button>
+                    <button onclick="downloadTemplate()" class="bg-sky-100 text-sky-700 px-6 py-3 rounded-lg font-bold hover:bg-sky-200 transition whitespace-nowrap"><i class="fas fa-download mr-2"></i>Download Template</button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="glass-panel p-8 rounded-2xl fade-in text-center border-t-4 border-emerald-500">
                         <div class="inline-block p-4 bg-emerald-50 text-emerald-500 rounded-full mb-4"><i class="fas fa-file-import text-3xl"></i></div>
                         <h3 class="font-bold text-lg mb-2">Import Data Massal</h3>
-                        <p class="text-xs text-slate-500 mb-6">Unggah file .xlsx yang sudah diisi. Sistem otomatis membaca 7 lembar sheet di dalamnya.</p>
+                        <p class="text-xs text-slate-500 mb-6">Unggah file .xlsx yang sudah diisi. Sistem otomatis membaca 7 lembar sheet.</p>
                         <input type="file" id="excelInput" accept=".xlsx" class="hidden">
                         <button onclick="document.getElementById('excelInput').click()" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-lg hover:bg-emerald-600 shadow-lg"><i class="fas fa-upload mr-2"></i>Pilih File .xlsx</button>
                     </div>
@@ -157,7 +275,7 @@
                     <div class="glass-panel p-8 rounded-2xl fade-in text-center border-t-4 border-orange-500">
                         <div class="inline-block p-4 bg-orange-50 text-orange-500 rounded-full mb-4"><i class="fas fa-file-export text-3xl"></i></div>
                         <h3 class="font-bold text-lg mb-2">Export Data Sistem</h3>
-                        <p class="text-xs text-slate-500 mb-6">Unduh seluruh database (Pasien, Diagnosa, Inhibitor, dll) menjadi satu file .xlsx lengkap.</p>
+                        <p class="text-xs text-slate-500 mb-6">Unduh seluruh database menjadi satu file .xlsx lengkap berisi 7 Sheet.</p>
                         <button onclick="exportToExcel()" class="w-full bg-orange-500 text-white font-bold py-3 rounded-lg hover:bg-orange-600 shadow-lg"><i class="fas fa-download mr-2"></i>Export .xlsx Sekarang</button>
                     </div>
                 </div>
@@ -173,9 +291,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, onSnapshot, deleteDoc, doc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase dari User
+        // Konfigurasi Anda
         const firebaseConfig = {
             apiKey: "AIzaSyA8DfaXtYCNQlHHCRxkn228QOllhOnCcn8",
             authDomain: "hmhidatasoloraya.firebaseapp.com",
@@ -187,9 +305,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        let rawDataCache = []; // Cache data untuk export
 
-        // --- AUTH ---
+        let rawPatientsData = [];
+        let currentEditId = null;
+
+        // AUTH
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-container').classList.add('hidden');
@@ -206,7 +326,7 @@
         };
         window.handleLogout = () => signOut(auth);
 
-        // --- NAVIGATION TABS ---
+        // NAVIGATION
         window.switchMainTab = (tab) => {
             const inputSec = document.getElementById('section-input');
             const manageSec = document.getElementById('section-manage');
@@ -224,10 +344,10 @@
             }
         };
 
-        // --- WIZARD LOGIC ---
+        // WIZARD
         let currentStep = 1;
         const totalSteps = 7;
-        const stepNames = ["Pasien", "Diagnosa", "Inhibitor", "Virus Tes", "RS", "Kematian", "Kontak"];
+        const stepNames = ["Pasien", "Diagnosa", "Inhibitor", "Virus Tes", "RS Penangan", "Kematian", "Kontak"];
         
         function buildStepper() {
             document.getElementById('stepper').innerHTML = stepNames.map((name, i) => `
@@ -251,129 +371,220 @@
             document.getElementById('btnSubmit').style.display = currentStep === totalSteps ? 'block' : 'none';
         };
 
-        // --- CRUD FIREBASE ---
+        // HELPER GET VALUE
+        const val = (id) => document.getElementById(id).value;
+
+        // CRUD: SIMPAN
         window.submitData = async () => {
             const data = {
-                patientInfo: { nama: document.getElementById('p_nama').value, nik: document.getElementById('p_nik').value },
-                diagnosa: { jenis: document.getElementById('d_jenis').value, kategori: document.getElementById('d_kategori').value },
-                rs_penangan: { nama: document.getElementById('r_nama').value, dpjp: document.getElementById('r_dpjp').value },
-                kontak: { nama: document.getElementById('c_nama').value, notelp: document.getElementById('c_notelp').value },
+                pasien: {
+                    nama: val('p_nama'), nik: val('p_nik'), jk: val('p_jk'), tempat_lahir: val('p_tempatlahir'),
+                    tgl_lahir: val('p_tgllahir'), gol_darah: val('p_goldarah'), rhesus: val('p_rhesus'),
+                    pekerjaan: val('p_pekerjaan'), pendidikan: val('p_pendidikan'), no_ponsel: val('p_noponsel'),
+                    hmhi_cabang: val('p_hmhi'), alamat: val('p_alamat'), kelurahan: val('p_kelurahan'),
+                    kecamatan: val('p_kecamatan'), kab_kota: val('p_kabkota'), propinsi: val('p_propinsi'),
+                    kota_cakupan: val('p_cakupan'), catatan: val('p_catatan'), ket_meninggal: val('p_ketmeninggal')
+                },
+                diagnosa: { jenis: val('d_jenis'), kategori: val('d_kategori'), tanggal: val('d_tanggal'), sumber: val('d_sumber') },
+                inhibitor: { faktor: val('i_faktor'), titer: val('i_titer'), tanggal: val('i_tanggal'), lab: val('i_lab') },
+                virus_tes: { jenis: val('v_jenis'), hasil: val('v_hasil'), tanggal: val('v_tanggal'), lab: val('v_lab') },
+                rs_penangan: { 
+                    nama_rs: val('r_namars'), dpjp: val('r_dpjp'), kota_rs: val('r_kotars'), provinsi_rs: val('r_provrs'),
+                    tgl_kunjungan: val('r_tglkunjungan'), jenis_penanganan: val('r_jenispenanganan'),
+                    layanan_rawat: val('r_layanan'), frekuensi: val('r_frekuensi'), dosis: val('r_dosis'),
+                    produk: val('r_produk'), merk: val('r_merk')
+                },
+                kematian: { penyebab: val('k_cause'), tahun: val('k_year') },
+                kontak: { relasi: val('c_relasi'), nama_kontak: val('c_namakontak'), no_telp: val('c_notelp'), is_primary: val('c_primary') },
                 timestamp: serverTimestamp()
             };
-            await addDoc(collection(db, "patients_db"), data);
-            alert("Data tersimpan!"); document.getElementById('wizardForm').reset(); currentStep = 1; changeStep(0);
+
+            try {
+                if(currentEditId) {
+                    await updateDoc(doc(db, "patients_db", currentEditId), data);
+                    alert("Data berhasil diperbarui!");
+                } else {
+                    await addDoc(collection(db, "patients_db"), data);
+                    alert("Data pasien baru tersimpan!");
+                }
+                window.resetForm();
+            } catch(e) { alert("Error: " + e.message); }
         };
 
+        // PREVIEW TABLE & SEARCH
         function loadPreviewData() {
             onSnapshot(collection(db, "patients_db"), (snap) => {
-                rawDataCache = [];
-                const tbody = document.getElementById('previewTableBody');
-                tbody.innerHTML = snap.empty ? '<tr><td colspan="6" class="px-4 py-4 text-center">Kosong</td></tr>' : '';
-                snap.forEach(docSnap => {
-                    const id = docSnap.id; const d = docSnap.data();
-                    rawDataCache.push({id, ...d}); // Simpan di memori untuk export Excel
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 border-b">
-                            <td class="px-4 py-3 font-mono text-xs text-sky-600">${id.substring(0,6)}...</td>
-                            <td class="px-4 py-3">${d.patientInfo?.nama || '-'}</td>
-                            <td class="px-4 py-3">${d.diagnosa?.jenis || '-'}</td>
-                            <td class="px-4 py-3">${d.rs_penangan?.nama || '-'}</td>
-                            <td class="px-4 py-3">${d.kontak?.nama || '-'}</td>
-                            <td class="px-4 py-3 text-center"><button onclick="hapus('${id}')" class="text-red-500"><i class="fas fa-trash"></i></button></td>
-                        </tr>`;
-                });
+                rawPatientsData = [];
+                snap.forEach(docSnap => rawPatientsData.push({ id: docSnap.id, ...docSnap.data() }));
+                renderTableBody(rawPatientsData);
             });
         }
-        window.hapus = async (id) => { if(confirm("Hapus?")) await deleteDoc(doc(db, "patients_db", id)); };
 
-
-        // ==========================================
-        // EXCEL SHEETJS LOGIC (IMPORT, EXPORT, TEMPLATE)
-        // ==========================================
-
-        // 1. Download Template Kosong
-        window.downloadTemplate = () => {
-            const wb = XLSX.utils.book_new();
-            // Buat header untuk masing-masing sheet berdasarkan referensi form
-            const sheets = {
-                "Pasien": [{"Nama Lengkap": "", "NIK": "", "Jenis Kelamin": "", "Tempat Lahir": "", "Tanggal Lahir": "", "Gol Darah": "", "Alamat": ""}],
-                "Diagnosa": [{"Nama Lengkap":"", "Jenis Hemofilia":"", "Kategori":"", "Tgl Diagnosis":""}],
-                "Inhibitor": [{"Nama Lengkap":"", "Faktor":"", "Titer BU":"", "Tgl Ukur":""}],
-                "Virus Tes": [{"Nama Lengkap":"", "Jenis Tes":"", "Hasil":"", "Tgl Tes":""}],
-                "RS Penangan": [{"Nama Lengkap":"", "Nama RS":"", "Nama DPJP":"", "Jenis Penanganan":""}],
-                "Kematian": [{"Nama Lengkap":"", "Penyebab Kematian":"", "Tahun Kematian":""}],
-                "Kontak": [{"Nama Lengkap":"", "Nama Kontak":"", "Relasi":"", "No Telp":""}]
-            };
-
-            for (let sheetName in sheets) {
-                const ws = XLSX.utils.json_to_sheet(sheets[sheetName]);
-                XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            }
-            XLSX.writeFile(wb, "Template_Hemofilia_Soloraya.xlsx");
+        window.filterTable = () => {
+            const query = val('searchInput').toLowerCase();
+            const filtered = rawPatientsData.filter(p => p.pasien?.nama?.toLowerCase().includes(query));
+            renderTableBody(filtered);
         };
 
-        // 2. Export Data Database ke Excel
-        window.exportToExcel = () => {
-            if(rawDataCache.length === 0) return alert("Belum ada data untuk diexport!");
-            
-            const wb = XLSX.utils.book_new();
-            
-            // Siapkan array kosong untuk tiap sheet
-            let p_data = [], d_data = [], i_data = [], v_data = [], r_data = [], k_data = [], c_data = [];
+        function renderTableBody(dataArray) {
+            const tbody = document.getElementById('previewTableBody');
+            if(dataArray.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center">Tidak ada data.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = '';
+            dataArray.forEach(d => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b cursor-pointer transition">
+                        <td class="px-4 py-3 font-mono text-xs text-sky-600" onclick="editData('${d.id}')">${d.id.substring(0,6)} <br> <span class="text-slate-400">${d.pasien?.nik || ''}</span></td>
+                        <td class="px-4 py-3 font-semibold" onclick="editData('${d.id}')">${d.pasien?.nama || '-'}</td>
+                        <td class="px-4 py-3 text-slate-600" onclick="editData('${d.id}')">${d.diagnosa?.jenis || '-'} (${d.diagnosa?.kategori || '-'})</td>
+                        <td class="px-4 py-3 text-slate-600" onclick="editData('${d.id}')">${d.rs_penangan?.nama_rs || '-'}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="editData('${d.id}')" class="text-sky-500 hover:text-sky-700 bg-sky-50 p-2 rounded-lg mr-1"><i class="fas fa-edit"></i></button>
+                            <button onclick="hapusData('${d.id}')" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
 
-            rawDataCache.forEach(row => {
-                const nama = row.patientInfo?.nama || 'Tanpa Nama';
-                p_data.push({"ID Sistem": row.id, "Nama Lengkap": nama, "NIK": row.patientInfo?.nik});
-                d_data.push({"Nama Lengkap": nama, "Jenis Hemofilia": row.diagnosa?.jenis, "Kategori": row.diagnosa?.kategori});
-                r_data.push({"Nama Lengkap": nama, "Nama RS": row.rs_penangan?.nama, "DPJP": row.rs_penangan?.dpjp});
-                c_data.push({"Nama Lengkap": nama, "Nama Kontak": row.kontak?.nama, "No Telp": row.kontak?.notelp});
-                // (Untuk struktur penuh, Anda bisa melengkapi kolom-kolom lainnya sesuai objek data)
+        window.hapusData = async (id) => {
+            if(confirm("Hapus seluruh data terkait pasien ini?")) await deleteDoc(doc(db, "patients_db", id));
+        };
+
+        // EDIT & POPULATE DATA
+        window.editData = (id) => {
+            const d = rawPatientsData.find(p => p.id === id);
+            if(!d) return;
+
+            currentEditId = id;
+            document.getElementById('formTitle').innerHTML = `<i class="fas fa-user-edit mr-2 text-orange-500"></i> Mode Edit: ${d.pasien?.nama}`;
+            document.getElementById('submitBtnText').innerText = "Update Data Pasien";
+            document.getElementById('btnSubmit').classList.replace('bg-emerald-500', 'bg-orange-500');
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+
+            const setVal = (fid, v) => document.getElementById(fid).value = v || '';
+
+            // Step 1
+            setVal('p_nama', d.pasien?.nama); setVal('p_nik', d.pasien?.nik); setVal('p_jk', d.pasien?.jk);
+            setVal('p_tempatlahir', d.pasien?.tempat_lahir); setVal('p_tgllahir', d.pasien?.tgl_lahir);
+            setVal('p_goldarah', d.pasien?.gol_darah); setVal('p_rhesus', d.pasien?.rhesus);
+            setVal('p_pekerjaan', d.pasien?.pekerjaan); setVal('p_pendidikan', d.pasien?.pendidikan);
+            setVal('p_noponsel', d.pasien?.no_ponsel); setVal('p_hmhi', d.pasien?.hmhi_cabang);
+            setVal('p_alamat', d.pasien?.alamat); setVal('p_kelurahan', d.pasien?.kelurahan);
+            setVal('p_kecamatan', d.pasien?.kecamatan); setVal('p_kabkota', d.pasien?.kab_kota);
+            setVal('p_propinsi', d.pasien?.propinsi); setVal('p_cakupan', d.pasien?.kota_cakupan);
+            setVal('p_catatan', d.pasien?.catatan); setVal('p_ketmeninggal', d.pasien?.ket_meninggal);
+
+            // Step 2
+            setVal('d_jenis', d.diagnosa?.jenis); setVal('d_kategori', d.diagnosa?.kategori);
+            setVal('d_tanggal', d.diagnosa?.tanggal); setVal('d_sumber', d.diagnosa?.sumber);
+
+            // Step 3
+            setVal('i_faktor', d.inhibitor?.faktor); setVal('i_titer', d.inhibitor?.titer);
+            setVal('i_tanggal', d.inhibitor?.tanggal); setVal('i_lab', d.inhibitor?.lab);
+
+            // Step 4
+            setVal('v_jenis', d.virus_tes?.jenis); setVal('v_hasil', d.virus_tes?.hasil);
+            setVal('v_tanggal', d.virus_tes?.tanggal); setVal('v_lab', d.virus_tes?.lab);
+
+            // Step 5
+            setVal('r_namars', d.rs_penangan?.nama_rs); setVal('r_dpjp', d.rs_penangan?.dpjp);
+            setVal('r_kotars', d.rs_penangan?.kota_rs); setVal('r_provrs', d.rs_penangan?.provinsi_rs);
+            setVal('r_tglkunjungan', d.rs_penangan?.tgl_kunjungan); setVal('r_jenispenanganan', d.rs_penangan?.jenis_penanganan);
+            setVal('r_layanan', d.rs_penangan?.layanan_rawat); setVal('r_frekuensi', d.rs_penangan?.frekuensi);
+            setVal('r_dosis', d.rs_penangan?.dosis); setVal('r_produk', d.rs_penangan?.produk); setVal('r_merk', d.rs_penangan?.merk);
+
+            // Step 6 & 7
+            setVal('k_cause', d.kematian?.penyebab); setVal('k_year', d.kematian?.tahun);
+            setVal('c_relasi', d.kontak?.relasi); setVal('c_namakontak', d.kontak?.nama_kontak);
+            setVal('c_notelp', d.kontak?.no_telp); setVal('c_primary', d.kontak?.is_primary);
+
+            currentStep = 1; changeStep(0);
+            document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.resetForm = () => {
+            currentEditId = null;
+            document.getElementById('wizardForm').reset();
+            document.getElementById('formTitle').innerHTML = `<i class="fas fa-file-medical mr-2 text-sky-500"></i> Form Input Komplit`;
+            document.getElementById('submitBtnText').innerText = "Simpan Pasien Baru";
+            document.getElementById('btnSubmit').classList.replace('bg-orange-500', 'bg-emerald-500');
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            currentStep = 1; changeStep(0);
+        };
+
+        // --- SHEETJS EXCEL (Template Lengkap) ---
+        window.downloadTemplate = () => {
+            const wb = XLSX.utils.book_new();
+            const s_pasien = [{"Nama Lengkap":"", "Tempat Lahir":"", "Tanggal Lahir":"", "NIK":"", "Gol. Darah":"", "Rhesus":"", "Jenis Kelamin":"", "Pekerjaan":"", "Pendidikan Terakhir":"", "Alamat":"", "Kelurahan/Desa":"", "Kecamatan":"", "No. Ponsel":"", "Propinsi":"", "Kabupaten/Kota":"", "HMHI Cabang":"", "Kota Cakupan Cabang":"", "Catatan":"", "Keterangan Meninggal":""}];
+            const s_diag = [{"Nama Lengkap":"", "Jenis Hemofilia":"", "Kategori":"", "Tgl Diagnosis":"", "Sumber":""}];
+            const s_inhi = [{"Nama Lengkap":"", "Faktor":"", "Titer (BU)":"", "Tgl Ukur":"", "Lab":""}];
+            const s_virus = [{"Nama Lengkap":"", "Jenis Tes":"", "Hasil":"", "Tgl Tes":"", "Lab":""}];
+            const s_rs = [{"Nama Lengkap":"", "Nama RS":"", "Kota RS":"", "Provinsi RS":"", "Tanggal Kunjungan":"", "DPJP":"", "Jenis Penanganan":"", "Layanan Rawat":"", "Frekuensi":"", "Dosis":"", "Produk":"", "Merk":""}];
+            const s_mati = [{"full_name":"", "cause_of_death":"", "year_of_death":""}];
+            const s_kontak = [{"Nama Lengkap":"", "Relasi":"", "Nama Kontak":"", "No. Telp":"", "Primary":""}];
+
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_pasien), "Pasien");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_diag), "Diagnosa");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_inhi), "Inhibitor");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_virus), "Virus Tes");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_rs), "RS Penangan");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_mati), "Kematian");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(s_kontak), "Kontak");
+            XLSX.writeFile(wb, "Template_Lengkap_Hemofilia.xlsx");
+        };
+
+        window.exportToExcel = () => {
+            if(rawPatientsData.length === 0) return alert("Data kosong!");
+            const wb = XLSX.utils.book_new();
+            let p=[], d=[], i=[], v=[], r=[], k=[], c=[];
+            
+            rawPatientsData.forEach(row => {
+                const nm = row.pasien?.nama || '';
+                p.push({"ID": row.id, "Nama Lengkap": nm, "Tempat Lahir": row.pasien?.tempat_lahir, "Tanggal Lahir": row.pasien?.tgl_lahir, "NIK": row.pasien?.nik, "Gol. Darah": row.pasien?.gol_darah, "Rhesus": row.pasien?.rhesus, "Jenis Kelamin": row.pasien?.jk, "Pekerjaan": row.pasien?.pekerjaan, "Pendidikan Terakhir": row.pasien?.pendidikan, "Alamat": row.pasien?.alamat, "Kelurahan/Desa": row.pasien?.kelurahan, "Kecamatan": row.pasien?.kecamatan, "No. Ponsel": row.pasien?.no_ponsel, "Propinsi": row.pasien?.propinsi, "Kabupaten/Kota": row.pasien?.kab_kota, "HMHI Cabang": row.pasien?.hmhi_cabang, "Kota Cakupan Cabang": row.pasien?.kota_cakupan, "Catatan": row.pasien?.catatan, "Keterangan Meninggal": row.pasien?.ket_meninggal});
+                d.push({"Nama Lengkap": nm, "Jenis Hemofilia": row.diagnosa?.jenis, "Kategori": row.diagnosa?.kategori, "Tgl Diagnosis": row.diagnosa?.tanggal, "Sumber": row.diagnosa?.sumber});
+                i.push({"Nama Lengkap": nm, "Faktor": row.inhibitor?.faktor, "Titer (BU)": row.inhibitor?.titer, "Tgl Ukur": row.inhibitor?.tanggal, "Lab": row.inhibitor?.lab});
+                v.push({"Nama Lengkap": nm, "Jenis Tes": row.virus_tes?.jenis, "Hasil": row.virus_tes?.hasil, "Tgl Tes": row.virus_tes?.tanggal, "Lab": row.virus_tes?.lab});
+                r.push({"Nama Lengkap": nm, "Nama RS": row.rs_penangan?.nama_rs, "Kota RS": row.rs_penangan?.kota_rs, "Provinsi RS": row.rs_penangan?.provinsi_rs, "Tanggal Kunjungan": row.rs_penangan?.tgl_kunjungan, "DPJP": row.rs_penangan?.dpjp, "Jenis Penanganan": row.rs_penangan?.jenis_penanganan, "Layanan Rawat": row.rs_penangan?.layanan_rawat, "Frekuensi": row.rs_penangan?.frekuensi, "Dosis": row.rs_penangan?.dosis, "Produk": row.rs_penangan?.produk, "Merk": row.rs_penangan?.merk});
+                k.push({"full_name": nm, "cause_of_death": row.kematian?.penyebab, "year_of_death": row.kematian?.tahun});
+                c.push({"Nama Lengkap": nm, "Relasi": row.kontak?.relasi, "Nama Kontak": row.kontak?.nama_kontak, "No. Telp": row.kontak?.no_telp, "Primary": row.kontak?.is_primary});
             });
 
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(p_data), "Pasien");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d_data), "Diagnosa");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(r_data), "RS Penangan");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(c_data), "Kontak");
-
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(p), "Pasien");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d), "Diagnosa");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(i), "Inhibitor");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(v), "Virus Tes");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(r), "RS Penangan");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(k), "Kematian");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(c), "Kontak");
             XLSX.writeFile(wb, "Database_Hemofilia_Full.xlsx");
         };
 
-        // 3. Import Data Massal dari Excel
+        // IMPORT HANDLER
         document.getElementById('excelInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if(!file) return;
-
             const reader = new FileReader();
             reader.onload = async (event) => {
                 const data = new Uint8Array(event.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
-                
-                // Ambil data dari sheet pertama (Pasien) sebagai acuan induk
-                const firstSheetName = workbook.SheetNames[0];
-                const rawJson = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
-                
+                const rawJson = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                 if(rawJson.length === 0) return alert("Sheet Pasien kosong!");
-
-                alert("Membaca file Excel. Mengunggah ke sistem...");
+                
+                alert("Mengunggah data massal...");
                 const batch = writeBatch(db);
-
-                // Simulasi mapping simpel dari Sheet Excel "Pasien" ke Database Firebase
                 rawJson.forEach(row => {
-                    const newDocRef = doc(collection(db, "patients_db"));
-                    batch.set(newDocRef, {
-                        patientInfo: {
-                            nama: row['Nama Lengkap'] || '',
-                            nik: row['NIK'] || '',
-                            tempat_lahir: row['Tempat Lahir'] || ''
-                        },
+                    const ref = doc(collection(db, "patients_db"));
+                    batch.set(ref, {
+                        pasien: { nama: row['Nama Lengkap']||'', nik: row['NIK']||'', jk: row['Jenis Kelamin']||'', tempat_lahir: row['Tempat Lahir']||'', tgl_lahir: row['Tanggal Lahir']||'', gol_darah: row['Gol. Darah']||'', rhesus: row['Rhesus']||'', pekerjaan: row['Pekerjaan']||'', pendidikan: row['Pendidikan Terakhir']||'', alamat: row['Alamat']||'', kelurahan: row['Kelurahan/Desa']||'', kecamatan: row['Kecamatan']||'', no_ponsel: row['No. Ponsel']||'', propinsi: row['Propinsi']||'', kab_kota: row['Kabupaten/Kota']||'', hmhi_cabang: row['HMHI Cabang']||'', kota_cakupan: row['Kota Cakupan Cabang']||'', catatan: row['Catatan']||'', ket_meninggal: row['Keterangan Meninggal']||'' },
                         timestamp: serverTimestamp()
                     });
                 });
-
                 await batch.commit();
-                alert("Import Selesai! Cek tabel preview.");
-                document.getElementById('excelInput').value = ''; // Reset input
-                switchMainTab('input'); // Pindah otomatis ke tab input untuk melihat hasil
+                alert("Import Selesai!");
+                document.getElementById('excelInput').value = '';
+                switchMainTab('input');
             };
             reader.readAsArrayBuffer(file);
         });
