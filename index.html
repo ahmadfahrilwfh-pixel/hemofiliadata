@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Hemofilia Soloraya</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(16, 24, 39, 0.85);
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --danger: #ff2a2a;
+            --text-main: #e2e8f0;
+            --border-color: #1e293b;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Futuristic Health Background Animation */
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+            overflow: hidden;
+        }
+        .pulse-line {
+            position: absolute; top: 50%; left: -100%; width: 100%; height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            animation: ecg-pulse 4s infinite linear;
+            opacity: 0.2;
+        }
+        @keyframes ecg-pulse {
+            0% { transform: translateX(0); clip-path: polygon(0 40%, 10% 40%, 12% 0%, 15% 100%, 18% 40%, 100% 40%, 100% 60%, 18% 60%, 15% 100%, 12% 0%, 10% 60%, 0 60%); }
+            100% { transform: translateX(200%); }
+        }
+
+        /* Login Overlay */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; transition: opacity 0.5s;
+        }
+        .login-box {
+            background: var(--panel-bg); padding: 40px; border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px var(--primary-glow);
+            text-align: center; width: 90%; max-width: 400px;
+        }
+        .login-box h2 { color: var(--primary); margin-top: 0; font-weight: 300; letter-spacing: 2px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group input {
+            width: 100%; padding: 12px; margin-top: 5px; box-sizing: border-box;
+            background: #0f172a; border: 1px solid var(--primary); color: var(--primary);
+            border-radius: 4px; outline: none; font-family: monospace;
+        }
+        .btn {
+            background: transparent; border: 1px solid var(--primary); color: var(--primary);
+            padding: 10px 20px; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 1px; transition: all 0.3s; font-weight: bold;
+        }
+        .btn:hover { background: var(--primary); color: var(--bg-color); box-shadow: 0 0 15px var(--primary-glow); }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px rgba(255,42,42,0.4); }
+
+        /* Main Dashboard */
+        #app-container { display: none; display: flex; flex-direction: column; height: 100vh; }
+        header {
+            background: var(--panel-bg); padding: 20px; border-bottom: 1px solid var(--primary);
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        header h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 400; text-transform: uppercase; letter-spacing: 2px;}
+        
+        .toolbar { padding: 15px 20px; display: flex; gap: 10px; flex-wrap: wrap; background: rgba(15, 23, 42, 0.6); }
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+
+        .table-container { flex: 1; overflow: auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px 15px; border: 1px solid var(--border-color); text-align: left; font-size: 0.9rem; }
+        th { background: rgba(0, 240, 255, 0.1); color: var(--primary); position: sticky; top: 0; z-index: 10; letter-spacing: 1px;}
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+        td[contenteditable="true"] { background: rgba(0, 240, 255, 0.05); outline: none; transition: background 0.2s; }
+        td[contenteditable="true"]:focus { background: rgba(0, 240, 255, 0.2); border-color: var(--primary); }
+
+        footer { text-align: center; padding: 15px; background: var(--panel-bg); border-top: 1px solid var(--border-color); font-size: 0.85rem; letter-spacing: 1px; color: #94a3b8; }
+        .highlight { color: var(--primary); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header { flex-direction: column; text-align: center; gap: 15px; }
+            .toolbar { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="pulse-line"></div>
+    </div>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>HEMOFILIA DB</h2>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 20px;">AUTHORIZED ACCESS ONLY</p>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Admin">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••">
+            </div>
+            <button class="btn" style="width: 100%;" onclick="attemptLogin()">ENTER TERMINAL</button>
+        </div>
+    </div>
+
+    <div id="app-container" style="display: none;">
+        <header>
+            <h1>Database Hemofilia Soloraya</h1>
+            <div>
+                <button class="btn btn-danger" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="file-upload-wrapper">
+                <button class="btn">Import CSV</button>
+                <input type="file" id="csvFileInput" accept=".csv">
+            </div>
+            <button class="btn" onclick="exportCSV()">Export to CSV</button>
+            <button class="btn" onclick="addRow()">+ Tambah Data</button>
+            <button class="btn btn-danger" onclick="deleteSelected()">- Hapus Terpilih</button>
+        </div>
+
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr id="tableHeader">
+                        <th>Upload File CSV untuk Memulai</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <footer>
+            DATABASE HEMOFILIA SOLORAYA | POWERED BY <span class="highlight">AHMAD FAHRIL</span>
+        </footer>
+    </div>
+
+    <script>
+        let currentData = [];
+        let headers = [];
+
+        // Simulasi Login (Untuk Firebase nanti, logika ini diganti dengan Firebase Auth)
+        function attemptLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            // Simulasi Hardcode, ganti dengan Auth Firebase saat hosting
+            if(user === "admin" && pass !== "") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex';
+            } else {
+                alert("Kredensial tidak valid.");
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // CSV Upload & Parsing
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    headers = results.meta.fields;
+                    currentData = results.data;
+                    renderTable();
+                }
+            });
+        });
+
+        // Merender Tabel
+        function renderTable() {
+            const thead = document.getElementById('tableHeader');
+            const tbody = document.getElementById('tableBody');
+            
+            thead.innerHTML = '<th><input type="checkbox" onchange="toggleAll(this)"></th>';
+            headers.forEach(header => {
+                thead.innerHTML += `<th>${header}</th>`;
+            });
+
+            tbody.innerHTML = '';
+            currentData.forEach((row, index) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td><input type="checkbox" class="row-checkbox" data-index="${index}"></td>`;
+                
+                headers.forEach(header => {
+                    let td = document.createElement('td');
+                    td.innerText = row[header] || '';
+                    td.setAttribute('contenteditable', 'true');
+                    td.addEventListener('blur', function() {
+                        // Fitur Edit: Langsung memperbarui array saat kursor keluar dari sel
+                        currentData[index][header] = this.innerText;
+                    });
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Fitur Tambah Baris Kosong
+        function addRow() {
+            if(headers.length === 0) {
+                alert("Silakan upload CSV format dasar terlebih dahulu untuk mendapatkan kerangka kolom.");
+                return;
+            }
+            let newRow = {};
+            headers.forEach(h => newRow[h] = "");
+            currentData.unshift(newRow); // Tambah di paling atas
+            renderTable();
+        }
+
+        // Fitur Checkbox Select All
+        function toggleAll(source) {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+        }
+
+        // Fitur Hapus Beberapa Data (Bulk Delete)
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            if(checkboxes.length === 0) return;
+            
+            if(confirm(`Yakin ingin menghapus ${checkboxes.length} baris data?`)) {
+                let indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-index')));
+                // Hapus dari belakang agar index tidak bergeser
+                indicesToDelete.sort((a,b) => b - a).forEach(index => {
+                    currentData.splice(index, 1);
+                });
+                renderTable();
+            }
+        }
+
+        // Fitur Download Full File (Eksport ke CSV)
+        function exportCSV() {
+            if(currentData.length === 0) {
+                alert("Tidak ada data untuk diekspor.");
+                return;
+            }
+            const csv = Papa.unparse(currentData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Database_Hemofilia_Updated.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
