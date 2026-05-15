@@ -4,282 +4,362 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Hemofilia Soloraya</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --panel-bg: rgba(16, 24, 39, 0.85);
-            --primary: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.4);
-            --danger: #ff2a2a;
-            --text-main: #e2e8f0;
-            --border-color: #1e293b;
-            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --primary: #ef4444; /* Blood Red */
+            --secondary: #0ea5e9; /* Medical Blue */
+            --bg-light: #f8fafc;
+            --card-light: #ffffff;
+            --text-light: #1e293b;
+            
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-dark: #f1f5f9;
         }
 
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow-x: hidden;
-        }
-
-        /* Futuristic Health Background Animation */
-        .bg-animation {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-            overflow: hidden;
-        }
-        .pulse-line {
-            position: absolute; top: 50%; left: -100%; width: 100%; height: 2px;
-            background: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
-            animation: ecg-pulse 4s infinite linear;
-            opacity: 0.2;
-        }
-        @keyframes ecg-pulse {
-            0% { transform: translateX(0); clip-path: polygon(0 40%, 10% 40%, 12% 0%, 15% 100%, 18% 40%, 100% 40%, 100% 60%, 18% 60%, 15% 100%, 12% 0%, 10% 60%, 0 60%); }
-            100% { transform: translateX(200%); }
-        }
-
-        /* Login Overlay */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; transition: opacity 0.5s;
-        }
-        .login-box {
-            background: var(--panel-bg); padding: 40px; border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 0 20px var(--primary-glow);
-            text-align: center; width: 90%; max-width: 400px;
-        }
-        .login-box h2 { color: var(--primary); margin-top: 0; font-weight: 300; letter-spacing: 2px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group input {
-            width: 100%; padding: 12px; margin-top: 5px; box-sizing: border-box;
-            background: #0f172a; border: 1px solid var(--primary); color: var(--primary);
-            border-radius: 4px; outline: none; font-family: monospace;
-        }
-        .btn {
-            background: transparent; border: 1px solid var(--primary); color: var(--primary);
-            padding: 10px 20px; border-radius: 4px; cursor: pointer; text-transform: uppercase;
-            letter-spacing: 1px; transition: all 0.3s; font-weight: bold;
-        }
-        .btn:hover { background: var(--primary); color: var(--bg-color); box-shadow: 0 0 15px var(--primary-glow); }
-        .btn-danger { border-color: var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px rgba(255,42,42,0.4); }
-
-        /* Main Dashboard */
-        #app-container { display: none; display: flex; flex-direction: column; height: 100vh; }
-        header {
-            background: var(--panel-bg); padding: 20px; border-bottom: 1px solid var(--primary);
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-        header h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 400; text-transform: uppercase; letter-spacing: 2px;}
+        body { transition: background 0.3s, color 0.3s; font-family: 'Inter', sans-serif; }
         
-        .toolbar { padding: 15px 20px; display: flex; gap: 10px; flex-wrap: wrap; background: rgba(15, 23, 42, 0.6); }
-        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; }
-        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+        /* Light Theme (Default) */
+        body.light-theme { background-color: var(--bg-light); color: var(--text-light); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
 
-        .table-container { flex: 1; overflow: auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { padding: 12px 15px; border: 1px solid var(--border-color); text-align: left; font-size: 0.9rem; }
-        th { background: rgba(0, 240, 255, 0.1); color: var(--primary); position: sticky; top: 0; z-index: 10; letter-spacing: 1px;}
-        tr:hover { background: rgba(255, 255, 255, 0.05); }
-        td[contenteditable="true"] { background: rgba(0, 240, 255, 0.05); outline: none; transition: background 0.2s; }
-        td[contenteditable="true"]:focus { background: rgba(0, 240, 255, 0.2); border-color: var(--primary); }
+        /* Dark Theme */
+        body.dark-theme { background-color: var(--bg-dark); color: var(--text-dark); }
+        body.dark-theme .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); }
+        body.dark-theme th { background: #334155; }
 
-        footer { text-align: center; padding: 15px; background: var(--panel-bg); border-top: 1px solid var(--border-color); font-size: 0.85rem; letter-spacing: 1px; color: #94a3b8; }
-        .highlight { color: var(--primary); }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header { flex-direction: column; text-align: center; gap: 15px; }
-            .toolbar { justify-content: center; }
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
+
+        .dna-loader {
+            width: 100px; height: 100px;
+            border: 5px solid #ef4444; border-top: 5px solid transparent;
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Welcome Text Animation */
+        .fade-in-up { animation: fadeInUp 1s ease-out forwards; opacity: 0; }
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Health Pulse Background */
+        .pulse-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.05; z-index: -1;
+        }
+
+        /* Table Styling */
+        .table-fixed-header { height: 60vh; overflow-y: auto; border-radius: 8px; }
+        table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        th { position: sticky; top: 0; background: #f1f5f9; z-index: 10; padding: 12px; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .dark-theme td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        [contenteditable]:focus { outline: 2px solid var(--secondary); background: rgba(14, 165, 233, 0.1); }
     </style>
 </head>
-<body>
+<body class="light-theme">
 
-    <div class="bg-animation">
-        <div class="pulse-line"></div>
+    <div class="pulse-bg"></div>
+
+    <div id="splash-screen">
+        <div class="dna-loader mb-8"></div>
+        <h1 class="text-3xl font-bold text-red-500 tracking-widest fade-in-up" style="animation-delay: 0.5s;">DATABASE HEMOFILIA</h1>
+        <p class="text-gray-500 mt-2 fade-in-up" style="animation-delay: 1s;">SOLO RAYA SYSTEM</p>
     </div>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>HEMOFILIA DB</h2>
-            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 20px;">AUTHORIZED ACCESS ONLY</p>
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="Admin">
+    <div id="login-container" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-red-500">
+            <div class="text-center mb-8">
+                <i class="fas fa-heartbeat text-5xl text-red-500 mb-4"></i>
+                <h2 class="text-2xl font-bold uppercase tracking-wide">Terminal Login</h2>
             </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="••••••••">
+            <div class="space-y-4">
+                <input type="email" id="loginEmail" placeholder="Admin Email" class="w-full p-4 rounded-lg bg-gray-100 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-red-500">
+                <input type="password" id="loginPass" placeholder="Password" class="w-full p-4 rounded-lg bg-gray-100 dark:bg-slate-800 border-none outline-none focus:ring-2 ring-red-500">
+                <button onclick="handleLogin()" class="w-full bg-red-500 text-white p-4 rounded-lg font-bold hover:bg-red-600 transition shadow-lg">AUTHENTICATE</button>
             </div>
-            <button class="btn" style="width: 100%;" onclick="attemptLogin()">ENTER TERMINAL</button>
         </div>
     </div>
 
-    <div id="app-container" style="display: none;">
-        <header>
-            <h1>Database Hemofilia Soloraya</h1>
+    <div id="app-container" class="hidden min-h-screen flex flex-col">
+        <header class="p-4 glass-card shadow-md flex justify-between items-center sticky top-0 z-50">
             <div>
-                <button class="btn btn-danger" onclick="logout()">Logout</button>
+                <h1 class="font-bold text-xl text-red-600">HEMOFILIA <span class="text-blue-500">SOLORAYA</span></h1>
+                <p id="welcome-msg" class="text-xs font-mono text-gray-500">Welcome Admin Ahmad Fahril</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </button>
+                <button onclick="handleLogout()" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition">LOGOUT</button>
             </div>
         </header>
 
-        <div class="toolbar">
-            <div class="file-upload-wrapper">
-                <button class="btn">Import CSV</button>
-                <input type="file" id="csvFileInput" accept=".csv">
+        <nav class="flex justify-center gap-4 p-4">
+            <button onclick="switchTab('main')" id="tab-main" class="px-6 py-2 rounded-full font-bold transition bg-red-500 text-white shadow-lg">DATABASE UTAMA</button>
+            <button onclick="switchTab('io')" id="tab-io" class="px-6 py-2 rounded-full font-bold transition bg-gray-200 dark:bg-gray-700">IMPORT / EXPORT</button>
+        </nav>
+
+        <main class="flex-1 p-4 md:p-8">
+            <div id="view-main" class="space-y-6">
+                <div class="glass-card p-6 rounded-2xl shadow-lg border-l-4 border-blue-500">
+                    <div class="flex flex-wrap gap-4 items-end mb-6">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-xs font-bold uppercase text-gray-400">Nama Pasien Baru</label>
+                            <input type="text" id="new-patient-name" placeholder="Input Nama..." class="w-full mt-1 p-3 rounded-lg border dark:bg-slate-800 dark:border-slate-700 outline-none">
+                        </div>
+                        <button onclick="addNewPatient()" class="bg-blue-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-600 transition shadow-lg">+ TAMBAH DATA</button>
+                    </div>
+
+                    <div class="table-fixed-header border rounded-lg">
+                        <table id="patientsTable">
+                            <thead>
+                                <tr id="tableHeader">
+                                    <th>Aksi</th>
+                                    <th>ID</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Tempat Lahir</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Gol. Darah</th>
+                                    <th>Jenis Hemofilia</th>
+                                    <th>Kategori</th>
+                                    <th>Alamat</th>
+                                    <th>Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4 italic"><i class="fas fa-sync-alt fa-spin mr-2"></i>Fitur Auto-Save Aktif: Data akan otomatis tersimpan saat Anda selesai mengetik di kolom.</p>
+                </div>
             </div>
-            <button class="btn" onclick="exportCSV()">Export to CSV</button>
-            <button class="btn" onclick="addRow()">+ Tambah Data</button>
-            <button class="btn btn-danger" onclick="deleteSelected()">- Hapus Terpilih</button>
-        </div>
 
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr id="tableHeader">
-                        <th>Upload File CSV untuk Memulai</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    </tbody>
-            </table>
-        </div>
+            <div id="view-io" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="glass-card p-8 rounded-2xl shadow-xl text-center border-t-4 border-green-500">
+                        <i class="fas fa-file-import text-5xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4">IMPORT DATA CSV</h3>
+                        <p class="text-sm text-gray-500 mb-6">Unggah file CSV Anda. Sistem akan memproses dan memasukkan data secara massal ke Firebase.</p>
+                        <input type="file" id="csvImportInput" accept=".csv" class="hidden">
+                        <button onclick="document.getElementById('csvImportInput').click()" class="bg-green-500 text-white px-8 py-3 rounded-lg font-bold w-full hover:bg-green-600 transition">PILIH FILE CSV</button>
+                    </div>
 
-        <footer>
-            DATABASE HEMOFILIA SOLORAYA | POWERED BY <span class="highlight">AHMAD FAHRIL</span>
+                    <div class="glass-card p-8 rounded-2xl shadow-xl text-center border-t-4 border-orange-500">
+                        <i class="fas fa-file-export text-5xl text-orange-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4">EXPORT DATA DATABASE</h3>
+                        <p class="text-sm text-gray-500 mb-6">Unduh seluruh database pasien Hemofilia Soloraya ke dalam format file CSV.</p>
+                        <button onclick="exportToCSV()" class="bg-orange-500 text-white px-8 py-3 rounded-lg font-bold w-full hover:bg-orange-600 transition">DOWNLOAD FULL DATA</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="p-6 text-center text-xs font-bold tracking-widest text-gray-400">
+            POWERED BY <span class="text-red-500">AHMAD FAHRIL</span> &copy; 2026 HEMOFILIA SOLORAYA
         </footer>
     </div>
 
-    <script>
-        let currentData = [];
-        let headers = [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Simulasi Login (Untuk Firebase nanti, logika ini diganti dengan Firebase Auth)
-        function attemptLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            // Simulasi Hardcode, ganti dengan Auth Firebase saat hosting
-            if(user === "admin" && pass !== "") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app-container').style.display = 'flex';
-            } else {
-                alert("Kredensial tidak valid.");
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8DfaXtYCNQlHHCRxkn228QOllhOnCcn8",
+            authDomain: "hmhidatasoloraya.firebaseapp.com",
+            projectId: "hmhidatasoloraya",
+            storageBucket: "hmhidatasoloraya.firebasestorage.app",
+            messagingSenderId: "84259348037",
+            appId: "1:84259348037:web:e89fad64f87721c4640d2c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE ---
+        let currentPatients = [];
+
+        // --- SPLASH LOGIC ---
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.transition = 'opacity 1s';
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+                checkAuthState();
+            }, 1000);
+        }, 5000);
+
+        function checkAuthState() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    document.getElementById('login-container').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                    loadData();
+                } else {
+                    document.getElementById('login-container').classList.remove('hidden');
+                    document.getElementById('app-container').classList.add('hidden');
+                }
+            });
+        }
+
+        // --- AUTH FUNCTIONS ---
+        window.handleLogin = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                alert("Gagal Login: " + e.message);
             }
+        };
+
+        window.handleLogout = () => signOut(auth);
+
+        // --- DATA FUNCTIONS (CRUD + AUTO SAVE) ---
+        function loadData() {
+            onSnapshot(collection(db, "patients"), (snapshot) => {
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+                currentPatients = [];
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    currentPatients.push({ id, ...data });
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="text-center"><button onclick="deletePatient('${id}')" class="text-red-500 hover:scale-125 transition"><i class="fas fa-trash"></i></button></td>
+                        <td class="text-gray-400 text-xs">${id.substring(0,5)}...</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'name', this.innerText)">${data.name || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'pob', this.innerText)">${data.pob || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'dob', this.innerText)">${data.dob || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'blood', this.innerText)">${data.blood || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'type', this.innerText)">${data.type || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'category', this.innerText)">${data.category || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'address', this.innerText)">${data.address || ''}</td>
+                        <td contenteditable="true" onblur="autoSave('${id}', 'note', this.innerText)">${data.note || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
         }
 
-        function logout() {
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('app-container').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        }
+        window.addNewPatient = async () => {
+            const nameInput = document.getElementById('new-patient-name');
+            if (!nameInput.value) return alert("Nama tidak boleh kosong!");
+            
+            await addDoc(collection(db, "patients"), {
+                name: nameInput.value,
+                pob: "", dob: "", blood: "", type: "", category: "", address: "", note: "",
+                createdAt: new Date()
+            });
+            nameInput.value = '';
+        };
 
-        // CSV Upload & Parsing
-        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+        window.autoSave = async (id, field, value) => {
+            const docRef = doc(db, "patients", id);
+            await updateDoc(docRef, { [field]: value });
+            console.log(`Saved ${field}: ${value}`);
+        };
+
+        window.deletePatient = async (id) => {
+            if (confirm("Hapus data pasien ini?")) {
+                await deleteDoc(doc(db, "patients", id));
+            }
+        };
+
+        // --- IMPORT / EXPORT ---
+        document.getElementById('csvImportInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) return;
-
             Papa.parse(file, {
                 header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    headers = results.meta.fields;
-                    currentData = results.data;
-                    renderTable();
+                complete: async (results) => {
+                    const batch = writeBatch(db);
+                    results.data.forEach(row => {
+                        if(row.Nama) { // Sesuaikan dengan header CSV anda
+                            const newDocRef = doc(collection(db, "patients"));
+                            batch.set(newDocRef, {
+                                name: row.Nama || row['Nama Lengkap'] || "",
+                                pob: row.TempatLahir || "",
+                                dob: row.TanggalLahir || "",
+                                blood: row.GolDarah || "",
+                                type: row.Jenis || "",
+                                category: row.Kategori || "",
+                                address: row.Alamat || "",
+                                note: row.Catatan || ""
+                            });
+                        }
+                    });
+                    await batch.commit();
+                    alert("Import Berhasil!");
+                    switchTab('main');
                 }
             });
         });
 
-        // Merender Tabel
-        function renderTable() {
-            const thead = document.getElementById('tableHeader');
-            const tbody = document.getElementById('tableBody');
-            
-            thead.innerHTML = '<th><input type="checkbox" onchange="toggleAll(this)"></th>';
-            headers.forEach(header => {
-                thead.innerHTML += `<th>${header}</th>`;
-            });
-
-            tbody.innerHTML = '';
-            currentData.forEach((row, index) => {
-                let tr = document.createElement('tr');
-                tr.innerHTML = `<td><input type="checkbox" class="row-checkbox" data-index="${index}"></td>`;
-                
-                headers.forEach(header => {
-                    let td = document.createElement('td');
-                    td.innerText = row[header] || '';
-                    td.setAttribute('contenteditable', 'true');
-                    td.addEventListener('blur', function() {
-                        // Fitur Edit: Langsung memperbarui array saat kursor keluar dari sel
-                        currentData[index][header] = this.innerText;
-                    });
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Fitur Tambah Baris Kosong
-        function addRow() {
-            if(headers.length === 0) {
-                alert("Silakan upload CSV format dasar terlebih dahulu untuk mendapatkan kerangka kolom.");
-                return;
-            }
-            let newRow = {};
-            headers.forEach(h => newRow[h] = "");
-            currentData.unshift(newRow); // Tambah di paling atas
-            renderTable();
-        }
-
-        // Fitur Checkbox Select All
-        function toggleAll(source) {
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-            checkboxes.forEach(cb => cb.checked = source.checked);
-        }
-
-        // Fitur Hapus Beberapa Data (Bulk Delete)
-        function deleteSelected() {
-            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
-            if(checkboxes.length === 0) return;
-            
-            if(confirm(`Yakin ingin menghapus ${checkboxes.length} baris data?`)) {
-                let indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-index')));
-                // Hapus dari belakang agar index tidak bergeser
-                indicesToDelete.sort((a,b) => b - a).forEach(index => {
-                    currentData.splice(index, 1);
-                });
-                renderTable();
-            }
-        }
-
-        // Fitur Download Full File (Eksport ke CSV)
-        function exportCSV() {
-            if(currentData.length === 0) {
-                alert("Tidak ada data untuk diekspor.");
-                return;
-            }
-            const csv = Papa.unparse(currentData);
+        window.exportToCSV = () => {
+            const csv = Papa.unparse(currentPatients);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "Database_Hemofilia_Updated.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = "Database_Hemofilia_Full.csv";
             link.click();
-            document.body.removeChild(link);
-        }
+        };
+
+        // --- UI UTILS ---
+        window.toggleTheme = () => {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if (body.classList.contains('light-theme')) {
+                body.classList.replace('light-theme', 'dark-theme');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                body.classList.replace('dark-theme', 'light-theme');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        };
+
+        window.switchTab = (tab) => {
+            const mainView = document.getElementById('view-main');
+            const ioView = document.getElementById('view-io');
+            const btnMain = document.getElementById('tab-main');
+            const btnIo = document.getElementById('tab-io');
+
+            if (tab === 'main') {
+                mainView.classList.remove('hidden');
+                ioView.classList.add('hidden');
+                btnMain.classList.add('bg-red-500', 'text-white');
+                btnMain.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                btnIo.classList.remove('bg-red-500', 'text-white');
+                btnIo.classList.add('bg-gray-200', 'dark:bg-gray-700');
+            } else {
+                mainView.classList.add('hidden');
+                ioView.classList.remove('hidden');
+                btnIo.classList.add('bg-red-500', 'text-white');
+                btnIo.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                btnMain.classList.remove('bg-red-500', 'text-white');
+                btnMain.classList.add('bg-gray-200', 'dark:bg-gray-700');
+            }
+        };
+
     </script>
 </body>
 </html>
