@@ -400,7 +400,7 @@
                 },
                 kematian: { penyebab: val('k_cause'), tahun: val('k_year') },
                 kontak: { relasi: val('c_relasi'), nama_kontak: val('c_namakontak'), no_telp: val('c_notelp'), is_primary: val('c_primary') },
-                timestamp: serverTimestamp() // Set waktu input saat data dibuat
+                timestamp: serverTimestamp()
             };
 
             try {
@@ -415,15 +415,13 @@
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        // PREVIEW TABLE & SEMUA FILTER (Nama, Tanggal, Limit Data)
+        // PREVIEW TABLE & SEMUA FILTER
         function loadPreviewData() {
             onSnapshot(collection(db, "patients_db"), (snap) => {
                 rawPatientsData = [];
                 snap.forEach(docSnap => rawPatientsData.push({ id: docSnap.id, ...docSnap.data() }));
                 
-                // MENGURUTKAN SESUAI ABJAD (A-Z)
                 rawPatientsData.sort((a, b) => {
-                    // Fallback aman jika data masih pakai format lama 'patientInfo'
                     const nameA = (a.pasien?.nama || a.patientInfo?.nama || "").toUpperCase();
                     const nameB = (b.pasien?.nama || b.patientInfo?.nama || "").toUpperCase();
                     return nameA.localeCompare(nameB);
@@ -446,7 +444,6 @@
                 let matchDate = true;
                 if(queryDate) {
                     if(p.timestamp && typeof p.timestamp.toDate === 'function') {
-                        // Menggunakan local time agar sama persis dengan yang diklik di kalender lokal
                         const dateObj = p.timestamp.toDate();
                         const year = dateObj.getFullYear();
                         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -458,7 +455,6 @@
                 return matchName && matchDate;
             });
 
-            // MEMBATASI JUMLAH DATA (Contoh: Hanya ingin download/tampil 1 atau 10 data)
             if (!isNaN(limitVal) && limitVal > 0) {
                 filteredPatientsData = filteredPatientsData.slice(0, limitVal);
             }
@@ -513,7 +509,6 @@
 
             const setVal = (fid, v) => document.getElementById(fid).value = v || '';
 
-            // Handling data lama & baru untuk jaga-jaga
             setVal('p_nama', d.pasien?.nama || d.patientInfo?.nama); setVal('p_nik', d.pasien?.nik || d.patientInfo?.nik); setVal('p_jk', d.pasien?.jk || d.patientInfo?.jk);
             setVal('p_tempatlahir', d.pasien?.tempat_lahir || d.patientInfo?.tempat_lahir); setVal('p_tgllahir', d.pasien?.tgl_lahir || d.patientInfo?.tgl_lahir);
             setVal('p_goldarah', d.pasien?.gol_darah || d.patientInfo?.gol_darah); setVal('p_rhesus', d.pasien?.rhesus || d.patientInfo?.rhesus);
@@ -557,7 +552,7 @@
             currentStep = 1; changeStep(0);
         };
 
-        // --- SHEETJS EXCEL (Template & Process) ---
+        // --- SHEETJS EXCEL ---
         window.downloadTemplate = () => {
             const wb = XLSX.utils.book_new();
             const s_pasien = [{"Nama Lengkap":"", "Tempat Lahir":"", "Tanggal Lahir":"", "NIK":"", "Gol. Darah":"", "Rhesus":"", "Jenis Kelamin":"", "Pekerjaan":"", "Pendidikan Terakhir":"", "Alamat":"", "Kelurahan/Desa":"", "Kecamatan":"", "No. Ponsel":"", "Propinsi":"", "Kabupaten/Kota":"", "HMHI Cabang":"", "Kota Cakupan Cabang":"", "Catatan":"", "Keterangan Meninggal":""}];
@@ -607,9 +602,7 @@
         window.exportFilteredData = () => processExport(filteredPatientsData, "Data_Terfilter_Hemofilia.xlsx");
         window.exportAllData = () => processExport(rawPatientsData, "Database_Hemofilia_Full.xlsx");
 
-        // ==========================================
-        // IMPORT MASSAL BACA 7 SHEET SEKALIGUS
-        // ==========================================
+        // --- IMPORT BACA 7 SHEET DAN SOLUSI ANGKA TANGGAL ACAK ---
         document.getElementById('excelInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if(!file) return;
@@ -621,7 +614,8 @@
                 
                 const getSheetData = (sheetName) => {
                     const exactOrPartialName = workbook.SheetNames.find(n => n.toLowerCase().includes(sheetName.toLowerCase()));
-                    return exactOrPartialName ? XLSX.utils.sheet_to_json(workbook.Sheets[exactOrPartialName]) : [];
+                    // MENGGUNAKAN { raw: false } AGAR TANGGAL DIBACA SEBAGAI TEKS BUKAN ANGKA MESIN EXCEL
+                    return exactOrPartialName ? XLSX.utils.sheet_to_json(workbook.Sheets[exactOrPartialName], { raw: false }) : [];
                 };
 
                 const dataPasien = getSheetData("Pasien");
@@ -694,7 +688,7 @@
                 });
 
                 await batch.commit();
-                alert("Import Massal Selesai! Data dari 7 sheet berhasil digabungkan.");
+                alert("Import Massal Selesai! Data dari 7 sheet berhasil digabungkan dengan format tanggal yang benar.");
                 document.getElementById('excelInput').value = '';
                 switchMainTab('input');
             };
