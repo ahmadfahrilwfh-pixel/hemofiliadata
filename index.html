@@ -206,29 +206,29 @@
 
                 <div class="glass-panel p-6 md:p-8 rounded-2xl fade-in">
                     <div class="flex flex-col xl:flex-row justify-between items-center border-b pb-4 mb-6 gap-4">
-                        <h2 class="text-xl font-bold text-slate-800 whitespace-nowrap"><i class="fas fa-table mr-2 text-sky-500"></i> Preview Database</h2>
-                        
-                        <div class="flex flex-col md:flex-row gap-3 w-full justify-end">
-                            <div class="relative w-full md:w-48">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-search text-slate-400"></i></div>
-                                <input type="text" id="searchInput" oninput="filterTable()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" placeholder="Cari nama...">
-                            </div>
+                            <h2 class="text-xl font-bold text-slate-800 whitespace-nowrap"><i class="fas fa-table mr-2 text-sky-500"></i> Preview Database</h2>
                             
-                            <div class="relative w-full md:w-48">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-calendar-alt text-slate-400"></i></div>
-                                <input type="date" id="dateFilterInput" onchange="filterTable()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" title="Filter berdasar tanggal input data">
-                            </div>
+                            <div class="flex flex-col md:flex-row gap-3 w-full justify-end">
+                                <div class="relative w-full md:w-48">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-search text-slate-400"></i></div>
+                                    <input type="text" id="searchInput" oninput="debouncedFilter()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" placeholder="Cari nama...">
+                                </div>
+                                
+                                <div class="relative w-full md:w-48">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-calendar-alt text-slate-400"></i></div>
+                                    <input type="date" id="dateFilterInput" onchange="debouncedFilter()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" title="Filter berdasar tanggal input data">
+                                </div>
 
-                            <div class="relative w-full md:w-28">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-list-ol text-slate-400"></i></div>
-                                <input type="number" id="limitFilterInput" oninput="filterTable()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" placeholder="Max data" title="Batasi jumlah data yang tampil/didownload">
-                            </div>
+                                <div class="relative w-full md:w-28">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-list-ol text-slate-400"></i></div>
+                                    <input type="number" id="limitFilterInput" oninput="debouncedFilter()" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5" placeholder="Max data" title="Batasi jumlah data yang tampil/didownload">
+                                </div>
 
-                            <button onclick="exportFilteredData()" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-emerald-600 transition shadow-md flex items-center justify-center whitespace-nowrap text-sm">
-                                <i class="fas fa-file-excel mr-2"></i> Download Data Tampil
-                            </button>
+                                <button onclick="exportFilteredData()" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-emerald-600 transition shadow-md flex items-center justify-center whitespace-nowrap text-sm">
+                                    <i class="fas fa-file-excel mr-2"></i> Download Data Tampil
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     
                     <div class="table-container overflow-x-auto border rounded-lg bg-white">
                         <table class="w-full text-sm text-left">
@@ -426,7 +426,7 @@
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        // PREVIEW TABLE & SEMUA FILTER
+      
         function loadPreviewData() {
             onSnapshot(collection(db, "patients_db"), (snap) => {
                 rawPatientsData = [];
@@ -443,6 +443,18 @@
             });
         }
 
+      /
+        let filterTimeout;
+        
+       
+        window.debouncedFilter = () => {
+            clearTimeout(filterTimeout);
+            filterTimeout = setTimeout(() => {
+                window.filterTable();
+            }, 300); 
+        };
+
+      
         window.filterTable = () => {
             const queryName = val('searchInput').toLowerCase();
             const queryDate = val('dateFilterInput'); 
@@ -502,12 +514,12 @@
                     </tr>`;
             });
         }
-
+     
         window.hapusData = async (id) => {
             if(confirm("Hapus seluruh data terkait pasien ini?")) await deleteDoc(doc(db, "patients_db", id));
         };
 
-        // EDIT DATA
+      
         window.editData = (id) => {
             const d = rawPatientsData.find(p => p.id === id);
             if(!d) return;
