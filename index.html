@@ -285,10 +285,13 @@
         </footer>
     </div>
 
-    <script type="module">
+<script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, onSnapshot, deleteDoc, doc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // Import Firebase App Check
+        import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA8DfaXtYCNQlHHCRxkn228QOllhOnCcn8",
@@ -298,7 +301,15 @@
             messagingSenderId: "84259348037",
             appId: "1:84259348037:web:e89fad64f87721c4640d2c"
         };
+        
         const app = initializeApp(firebaseConfig);
+
+        // Aktifkan keamanan App Check dengan Site Key reCAPTCHA Anda
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaEnterpriseProvider('6LcT1OwsAAAAAHVJ2u4QhznxqNjvqCpzmXzpXeVC'),
+            isTokenAutoRefreshEnabled: true
+        });
+
         const auth = getAuth(app);
         const db = getFirestore(app);
 
