@@ -339,7 +339,7 @@ const app = initializeApp(firebaseConfig);
         }
         window.handleLogin = async () => {
             try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPass').value); } 
-            catch (e) { alert("Login Gagal!"); }
+            catch (e) { alert("Login Gagal! Detail: " + e.code); console.error(e); }
         };
         window.handleLogout = () => signOut(auth);
 
