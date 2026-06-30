@@ -302,13 +302,14 @@
             appId: "1:84259348037:web:e89fad64f87721c4640d2c"
         };
         
-        const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-        // Aktifkan keamanan App Check dengan Site Key reCAPTCHA Anda
-        //const appCheck = initializeAppCheck(app, {
-           // provider: new ReCaptchaEnterpriseProvider('6LcT1OwsAAAAAHVJ2u4QhznxqNjvqCpzmXzpXeVC'),
-           // isTokenAutoRefreshEnabled: true
-        });
+        // MATIKAN SEMENTARA APP CHECK AGAR LOGIN BISA JALAN DI GITHUB PAGES
+        // const appCheck = initializeAppCheck(app, {
+        //     provider: new ReCaptchaEnterpriseProvider('6LcT1OwsAAAAAHVJ2u4QhznxqNjvqCpzmXzpXeVC'),
+        //     isTokenAutoRefreshEnabled: true
+        // });
+
 
         const auth = getAuth(app);
         const db = getFirestore(app);
