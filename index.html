@@ -305,9 +305,9 @@
         const app = initializeApp(firebaseConfig);
 
         // Aktifkan keamanan App Check dengan Site Key reCAPTCHA Anda
-        const appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaEnterpriseProvider('6LcT1OwsAAAAAHVJ2u4QhznxqNjvqCpzmXzpXeVC'),
-            isTokenAutoRefreshEnabled: true
+        //const appCheck = initializeAppCheck(app, {
+           // provider: new ReCaptchaEnterpriseProvider('6LcT1OwsAAAAAHVJ2u4QhznxqNjvqCpzmXzpXeVC'),
+           // isTokenAutoRefreshEnabled: true
         });
 
         const auth = getAuth(app);
